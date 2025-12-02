@@ -33,8 +33,10 @@ export class UsersService {
     return await query.getMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new BadRequestException('User does not exist');
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

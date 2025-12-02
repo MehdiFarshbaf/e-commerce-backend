@@ -48,8 +48,13 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param('id') id: string, @Res() res: Response) {
+    const user = await this.usersService.findOne(+id);
+    res.status(HttpStatus.OK).json({
+      status: 'success',
+      data: user,
+      message: 'User found',
+    });
   }
 
   @Patch(':id')
