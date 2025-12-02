@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import { RegisterDto } from './dto/register.dto';
+import UserRoleEnum from '../users/enums/userRoleEnum';
+import * as bcrypt from 'bcryptjs';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async register(registerDto: RegisterDto) {
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+    return this.userService.create({
+      ...registerDto,
+      password: hashedPassword,
+      role: UserRoleEnum.Normal_User,
+    });
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async login(loginDto: LoginDto) {
+    const user = await this.userService.findUserByMobile(loginDto.mobile);
+    if (!(await bcrypt.compare(loginDto.password, user.password))) {
+      throw new UnauthorizedException('رمز ورود شما اشتباه است.');
+    }
+    const payload = {
+      mobile: user.mobile,
+      sub: user.id,
+      display_name: user.display_name,
+    };
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const token = this.jwtService.sign(payload);
+    return { accessToken: token };
   }
 }
