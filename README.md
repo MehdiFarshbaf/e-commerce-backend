@@ -96,3 +96,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Command for free port 3000
+
+- for find pid port 3000 : netstat -ano | findstr :3000
+- taskkill  :  taskkill /PID 12345 /F
