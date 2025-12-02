@@ -9,12 +9,14 @@ import {
   Res,
   HttpStatus,
   Query,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import type { Response } from 'express';
 import UserRoleEnum from './enums/userRoleEnum';
+// import { plainToClass } from 'class-transformer';
 
 @Controller('users')
 export class UsersController {
@@ -57,13 +59,31 @@ export class UsersController {
     });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Res() res: Response,
+  ) {
+    // const newBody = plainToClass(UpdateUserDto, updateUserDto, {
+    //   excludeExtraneousValues: true,
+    // });
+
+    const user = await this.usersService.update(+id, updateUserDto);
+    res.status(HttpStatus.OK).json({
+      status: 'success',
+      data: user,
+      message: 'User updated',
+    });
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param('id') id: string, @Res() res: Response) {
+    await this.usersService.remove(+id);
+    res.status(HttpStatus.OK).json({
+      status: 'success',
+      message: 'User removed',
+      data: null,
+    });
   }
 }

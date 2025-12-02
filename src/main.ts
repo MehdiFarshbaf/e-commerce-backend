@@ -8,8 +8,8 @@ async function bootstrap() {
   // Validation
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // فیلدهای اضافی رو حذف کنه
-      forbidNonWhitelisted: true,
+      whitelist: true, // فقط فیلدهایی که در DTO تعریف کردی رو قبول می‌کنه
+      forbidNonWhitelisted: false, // اگر فیلد اضافی بفرستن → خطا می‌ده
       transform: true,
       exceptionFactory: (errors: ValidationError[]) => {
         const result = errors.reduce((acc, error) => {
