@@ -20,7 +20,7 @@ import UserRoleEnum from './enums/userRoleEnum';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
+  
   @Post()
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     const newUser = await this.usersService.create(createUserDto);
