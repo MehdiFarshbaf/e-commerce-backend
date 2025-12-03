@@ -1,6 +1,9 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateAddressDto {
+  @IsNumber()
+  userId: number;
+
   @IsString({ message: 'مقدار استان باید رشته باشد.' })
   @IsNotEmpty({ message: 'مقدار استان الزامی است.' })
   province: string;
