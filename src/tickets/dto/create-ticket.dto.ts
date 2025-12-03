@@ -1,9 +1,13 @@
 import { CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTicketDto {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  userId: number;
 
   @IsNotEmpty()
   @IsString()
