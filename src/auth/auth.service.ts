@@ -24,16 +24,17 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const user = await this.userService.findUserByMobile(loginDto.mobile);
-    if (!(await bcrypt.compare(loginDto.password, user.password))) {
-      throw new UnauthorizedException('رمز ورود شما اشتباه است.');
+    if (user) {
+      if (!(await bcrypt.compare(loginDto.password, user.password))) {
+        throw new UnauthorizedException('رمز ورود شما اشتباه است.');
+      }
+      const payload = {
+        mobile: user.mobile,
+        sub: user.id,
+        display_name: user.display_name,
+      };
+      const token = this.jwtService.sign(payload);
+      return { accessToken: token };
     }
-    const payload = {
-      mobile: user.mobile,
-      sub: user.id,
-      display_name: user.display_name,
-    };
-
-    const token = this.jwtService.sign(payload);
-    return { accessToken: token };
   }
 }

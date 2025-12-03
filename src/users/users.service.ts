@@ -46,9 +46,9 @@ export class UsersService {
     return user;
   }
 
-  async findUserByMobile(mobile: string) {
+  async findUserByMobile(mobile: string, checkExit: boolean = false) {
     const user = await this.userRepository.findOneBy({ mobile });
-    if (!user)
+    if (!user && checkExit)
       throw new BadRequestException('کاربری با این شماره موبایل یافت نشد.');
     return user;
   }

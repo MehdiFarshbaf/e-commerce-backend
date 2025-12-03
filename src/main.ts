@@ -1,12 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  ValidationPipe,
-} from '@nestjs/common';
-import { ValidationError } from 'class-validator';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
@@ -15,64 +9,17 @@ async function bootstrap() {
   // Global Exception Filter
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  // Validation
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: true,
-  //     forbidNonWhitelisted: true,
-  //     transform: true,
-  //     exceptionFactory: (errors) =>
-  //       new HttpException(
-  //         {
-  //           success: false,
-  //           errorCode: 'VALIDATION_ERROR',
-  //           message: 'داده‌های ورودی معتبر نیستند',
-  //           details: errors.map((e) => ({
-  //             field: e.property,
-  //             errors: Object.values(e.constraints || {}),
-  //           })),
-  //         },
-  //         HttpStatus.BAD_REQUEST,
-  //       ),
-  //   }),
-  // );
-
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: true, // فقط فیلدهایی که در DTO تعریف کردی رو قبول می‌کنه
-  //     forbidNonWhitelisted: false, // اگر فیلد اضافی بفرستن → خطا می‌ده
-  //     transform: true,
-  //     exceptionFactory: (errors: ValidationError[]) => {
-  //       const result = errors.reduce((acc, error) => {
-  //         acc[error.property] = Object.values(error.constraints ?? {});
-  //         return acc;
-  //       }, {});
-  //
-  //       return new BadRequestException({
-  //         message: 'Validation failed',
-  //         errors: result, // اینجا خطاها جدا بر اساس فیلد می‌شن
-  //         statusCode: 400,
-  //       });
-  //     },
-  //   }),
-  // );
-
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: true,
-  //     forbidNonWhitelisted: true,
-  //     transform: true,
-  //     disableErrorMessages: false, // این خط مهمه! بدون این، گروه‌بندی نمیشه
-  //   }),
-  // );
-
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      // این خط مهمه! بدون این، خطاها گروه‌بندی نمیشن
+      transform: true, // Automatically transforms payload to DTO instance
+      whitelist: true, // Strips properties that are NOT defined in the DTO
+      // forbidNonWhitelisted: true,      // ← Remove or set to false (this is the key!)
+      forbidNonWhitelisted: false, // Allows extra fields without throwing error
+
       exceptionFactory: (errors) => {
+        // This factory only runs when there are real validation errors
+        // (e.g. @IsEmail(), @IsString(), etc.)
+        // Since forbidNonWhitelisted is false, "property should not exist" errors won't appear here
         const result = errors.reduce(
           (acc, error) => {
             acc[error.property] = Object.values(error.constraints || {});
