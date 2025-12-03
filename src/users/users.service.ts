@@ -14,6 +14,13 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     try {
+      const alreadyUser = await this.findUserByMobile(createUserDto.mobile);
+      if (alreadyUser) {
+        throw new BadRequestException(
+          'کاربری با این شماره موبایل ثبت نام کرده داریم.',
+        );
+      }
+
       const newUser = this.userRepository.create(createUserDto);
       return await this.userRepository.save(newUser);
     } catch (error) {
@@ -35,7 +42,14 @@ export class UsersService {
 
   async findOne(id: number) {
     const user = await this.userRepository.findOneBy({ id });
-    if (!user) throw new BadRequestException('User does not exist');
+    if (!user) throw new BadRequestException('کاربری با این شناسه یافت نشد.');
+    return user;
+  }
+
+  async findUserByMobile(mobile: string) {
+    const user = await this.userRepository.findOneBy({ mobile });
+    if (!user)
+      throw new BadRequestException('کاربری با این شماره موبایل یافت نشد.');
     return user;
   }
 
