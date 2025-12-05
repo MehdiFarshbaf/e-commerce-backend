@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from './entities/ticket.entity';
@@ -51,5 +55,16 @@ export class TicketsService {
       },
     });
     return tickets;
+  }
+
+  async findOne(id: number) {
+    const ticket = await this.ticketRepository.findOne({
+      where: { id },
+      relations: ['replies'],
+    });
+    if (!ticket) {
+      new NotFoundException('تیکتی با این سناسه یافت نشد.');
+    }
+    return ticket;
   }
 }
