@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { AddressModule } from './address/address.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { IpTrackerModule } from './ip-tracker/ip-tracker.module';
+import {IpTrackerMiddleware} from "./ip-tracker/ip-tracker.middleware";
 
 @Module({
   imports: [
@@ -33,4 +34,8 @@ import { IpTrackerModule } from './ip-tracker/ip-tracker.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(IpTrackerMiddleware).forRoutes('*');
+  }
+}
