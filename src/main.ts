@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { LoggerMiddleware } from './middlewares/logger/logger.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -36,6 +37,8 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.use(new LoggerMiddleware().use);
 
   await app.listen(process.env.PORT ?? 3000);
 }

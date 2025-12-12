@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AddressModule } from './address/address.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { IpTrackerModule } from './ip-tracker/ip-tracker.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TicketsModule } from './tickets/tickets.module';
     AuthModule,
     AddressModule,
     TicketsModule,
+    IpTrackerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
