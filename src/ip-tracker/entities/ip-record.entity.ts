@@ -4,6 +4,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class IpTracker {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   ip: string;
 
