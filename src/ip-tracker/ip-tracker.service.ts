@@ -8,6 +8,7 @@ export class IpTrackerService {
   private readonly MAX_REQUESTS = 10;
   private readonly WINDOW_MINUTES = 1;
   private readonly BLOCK_MINUTES = 1;
+  private readonly TEHRAN_TIMEZONE = 3.5 * 60 * 60 * 1000;
 
   constructor(
     @InjectRepository(IpRecord)
@@ -30,7 +31,9 @@ export class IpTrackerService {
       return;
     }
     const windowEnd = new Date(
-      record.windowStart.getTime() + this.WINDOW_MINUTES * 60 * 1000,
+      record.windowStart.getTime() +
+        this.WINDOW_MINUTES * 60 * 1000 +
+        this.WINDOW_MINUTES,
     );
   }
 }
