@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class IpTracker {
+export class IpRecord {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -17,6 +17,6 @@ export class IpTracker {
   @Column({ default: false })
   isBlocked: boolean;
 
-  @Column({ type: 'timestamp' })
-  blockUntil: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  blockUntil: Date | null;
 }

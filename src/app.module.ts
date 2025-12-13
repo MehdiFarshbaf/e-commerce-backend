@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { AddressModule } from './address/address.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { IpTrackerModule } from './ip-tracker/ip-tracker.module';
-import {IpTrackerMiddleware} from "./ip-tracker/ip-tracker.middleware";
+import { IpTrackerMiddleware } from './ip-tracker/ip-tracker.middleware';
 
 @Module({
   imports: [
