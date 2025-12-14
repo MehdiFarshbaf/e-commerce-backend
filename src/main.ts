@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { LoggerMiddleware } from './middlewares/logger/logger.middleware';
+import { setupSwagger } from './config/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -38,7 +39,11 @@ async function bootstrap() {
     }),
   );
 
+
   app.use(new LoggerMiddleware().use);
+
+  // Swagger setup
+  setupSwagger(app);
 
   await app.listen(process.env.PORT ?? 3000);
 }
