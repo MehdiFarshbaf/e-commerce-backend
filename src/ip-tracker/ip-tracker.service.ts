@@ -35,16 +35,16 @@ export class IpTrackerService {
     }
 
     // check blocked ip
-    if (record.isBlocked && record.blockUntil && nowTime < record.blockUntil) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.TOO_MANY_REQUESTS,
-          error: 'To Many Requests',
-          message: `شما برای ${this.BLOCK_MINUTES} دقیقه بلاک هستدید.`,
-        },
-        HttpStatus.TOO_MANY_REQUESTS,
-      )
-    }
+    // if (record.isBlocked && record.blockUntil && nowTime < record.blockUntil) {
+    //   throw new HttpException(
+    //     {
+    //       statusCode: HttpStatus.TOO_MANY_REQUESTS,
+    //       error: 'To Many Requests',
+    //       message: `شما برای ${this.BLOCK_MINUTES} دقیقه بلاک هستدید.`,
+    //     },
+    //     HttpStatus.TOO_MANY_REQUESTS,
+    //   )
+    // }
 
     // calculate windowEnd
     const windowEnd = new Date(
