@@ -1,4 +1,4 @@
- import {
+import {
   Controller,
   Get,
   Post,
@@ -14,16 +14,18 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import type { Response } from 'express';
-import UserRoleEnum from './enums/userRoleEnum';
+import Role from './enums/userRoleEnum';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Roles } from 'src/auth/decorators/role.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Users - مدیریت کاربران')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
+  @Roles(Role.Admin, Role.Moderator)
   @ApiOperation({ summary: 'Create a new user' })
   @Post()
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
@@ -43,7 +45,7 @@ export class UsersController {
   @Get()
   async findAll(
     @Res() res: Response,
-    @Query('role') role?: UserRoleEnum,
+    @Query('role') role?: Role,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ) {

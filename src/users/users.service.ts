@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import UserRoleEnum from './enums/userRoleEnum';
+import Role from './enums/userRoleEnum';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +28,7 @@ export class UsersService {
     }
   }
 
-  async findAll(role?: UserRoleEnum, limit: number = 10, page: number = 1) {
+  async findAll(role?: Role, limit: number = 10, page: number = 1) {
     const query = this.userRepository.createQueryBuilder('users');
 
     if (role) {

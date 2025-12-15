@@ -1,4 +1,4 @@
-import UserRoleEnum from '../enums/userRoleEnum';
+import Role from '../enums/userRoleEnum';
 import {
   IsEnum,
   IsNotEmpty,
@@ -30,15 +30,15 @@ export class CreateUserDto {
   password: string;
 
   @ApiPropertyOptional({
-    enum: UserRoleEnum,
+    enum: Role,
     enumName: 'UserRoleEnum', // اختیاری اما توصیه می‌شه برای وضوح بیشتر
-    example: UserRoleEnum.Normal_User, // معمولاً کاربر معمولی پیش‌فرض بهتریه
+    example: Role.Normal_User, // معمولاً کاربر معمولی پیش‌فرض بهتریه
     description: 'Role of the user. Default is "user" if not provided.',
-    default: UserRoleEnum.Normal_User, // اگر در سرویس پیش‌فرض user هست، اینجا هم نشون بده
+    default: Role.Normal_User, // اگر در سرویس پیش‌فرض user هست، اینجا هم نشون بده
   })
-  @IsEnum(UserRoleEnum, {
+  @IsEnum(Role, {
     message: 'مقدار role باید یکی از مقادیر admin یا user باشد.',
   })
   @IsOptional()
-  role: UserRoleEnum;
+  role: Role;
 }
