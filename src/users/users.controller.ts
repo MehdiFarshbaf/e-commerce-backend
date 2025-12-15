@@ -15,13 +15,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import type { Response } from 'express';
 import UserRoleEnum from './enums/userRoleEnum';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 // import { plainToClass } from 'class-transformer';
 
+@ApiTags('Users - مدیریت کاربران')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   
+  @ApiOperation({ summary: 'Create a new user' })
   @Post()
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     const newUser = await this.usersService.create(createUserDto);
@@ -34,6 +37,7 @@ export class UsersController {
     });
   }
 
+  @ApiOperation({ summary: 'Get all users (with optional role filter, pagination)' })
   @Get()
   async findAll(
     @Res() res: Response,
@@ -49,6 +53,7 @@ export class UsersController {
     });
   }
 
+  @ApiOperation({ summary: 'Get a user by ID' })
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const user = await this.usersService.findOne(+id);
@@ -59,6 +64,7 @@ export class UsersController {
     });
   }
 
+  @ApiOperation({ summary: 'Update a user by ID' })
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -77,6 +83,7 @@ export class UsersController {
     });
   }
 
+  @ApiOperation({ summary: 'Delete a user by ID' })
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {
     await this.usersService.remove(+id);
