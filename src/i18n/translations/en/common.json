@@ -1,0 +1,7 @@
+{
+  "login": "login user",
+  "auth": {
+    "loginMessage": "login user",
+    "registerMessage": "register user"
+  }
+}

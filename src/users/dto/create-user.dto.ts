@@ -18,7 +18,7 @@ export class CreateUserDto {
   @Transform(({ value }) => (value as string).trim())
   mobile: string;
 
-  @ApiProperty({ example: "Mehdi Farshabf", description: "display name" })
+  @ApiProperty({ example: 'Mehdi Farshabf', description: 'display name' })
   @IsString({ message: 'نام باید متن باشد.' })
   @IsNotEmpty({ message: 'وارد کردن نام الزامی است.' })
   display_name: string;

@@ -1,19 +1,22 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigModule } from '@nestjs/config'
-import { UsersModule } from './users/users.module'
-import { AuthModule } from './auth/auth.module'
-import { AddressModule } from './address/address.module'
-import { TicketsModule } from './tickets/tickets.module'
-import { IpTrackerModule } from './ip-tracker/ip-tracker.module'
-import { IpTrackerMiddleware } from './ip-tracker/ip-tracker.middleware'
-import { APP_GUARD } from '@nestjs/core'
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { AddressModule } from './address/address.module';
+import { TicketsModule } from './tickets/tickets.module';
+import { IpTrackerModule } from './ip-tracker/ip-tracker.module';
+import { IpTrackerMiddleware } from './ip-tracker/ip-tracker.middleware';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { AppI18nModule } from './i18n/i18n.module';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
+    AppI18nModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -40,10 +43,14 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {
-  configure (consumer: MiddlewareConsumer) {
-    consumer.apply(IpTrackerMiddleware).forRoutes('*')
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(IpTrackerMiddleware).forRoutes('*');
   }
 }

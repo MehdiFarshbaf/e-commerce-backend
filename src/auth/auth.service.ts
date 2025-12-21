@@ -11,7 +11,7 @@ export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   async register(registerDto: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
@@ -32,7 +32,7 @@ export class AuthService {
         mobile: user.mobile,
         sub: user.id,
         display_name: user.display_name,
-        role: user.role
+        role: user.role,
       };
       const token = this.jwtService.sign(payload);
       return { accessToken: token };

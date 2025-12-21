@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import Role from './enums/userRoleEnum';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +22,12 @@ export class UsersService {
         );
       }
 
-      const newUser = this.userRepository.create(createUserDto);
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+      const newUser = this.userRepository.create({
+        ...createUserDto,
+        password: hashedPassword,
+      });
       return await this.userRepository.save(newUser);
     } catch (error) {
       throw new BadRequestException(error);
