@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -9,6 +11,7 @@ import {
 import Role from '../enums/userRoleEnum';
 import { Address } from '../../address/entities/address.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
+import { Role: RoleEntity } from './../../auth/entities/role.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -42,4 +45,9 @@ export class User {
 
   @OneToMany(() => Ticket, (ticket) => ticket.user)
   tickets: Ticket[];
+
+  @ManyToMany(() => RoleEntity)
+  @JoinTable()
+  roles: RoleEntity[]
+
 }
