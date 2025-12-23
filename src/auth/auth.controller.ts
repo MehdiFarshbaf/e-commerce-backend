@@ -36,7 +36,7 @@ export class AuthController {
     const loginData = await this.authService.login(body);
     return {
       success: true,
-      message: this.i18n.t('common.auth.loginMessage'),
+      message: this.i18n.t('auth.login'),
       data: loginData,
     };
   }

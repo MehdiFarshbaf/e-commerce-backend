@@ -5,12 +5,14 @@ import { RegisterDto } from './dto/register.dto';
 import Role from '../users/enums/userRoleEnum';
 import * as bcrypt from 'bcryptjs';
 import { LoginDto } from './dto/login.dto';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly i18n: I18nService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -35,7 +37,10 @@ export class AuthService {
         role: user.role,
       };
       const token = this.jwtService.sign(payload);
-      return { accessToken: token };
+      return {
+        accessToken: token,
+        message: this.i18n.translate('auth.login'),
+      };
     }
   }
 }

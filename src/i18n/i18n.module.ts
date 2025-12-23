@@ -6,23 +6,46 @@ import {
   QueryResolver,
 } from 'nestjs-i18n';
 import * as path from 'node:path';
-import * as process from 'node:process';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    I18nModule.forRoot({
-      fallbackLanguage: 'fa',
-      loaderOptions: {
-        path: path.join(process.cwd(), 'src/i18n/translations'),
-      },
+    I18nModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        fallbackLanguage: configService.get<string>('FALLBACK_LANGUAGE', 'fa'),
+        loaderOptions: {
+          path: path.join(process.cwd(), 'src', 'i18n', 'locales'),
+          watch: true,
+        },
+      }),
       resolvers: [
         { use: QueryResolver, options: ['lang'] },
         AcceptLanguageResolver,
-        new HeaderResolver(['x-lang']),
+        new HeaderResolver(['x-lang', 'accept-language']),
       ],
-      // inject: [ConfigService],
+      inject: [ConfigService],
     }),
   ],
   exports: [I18nModule],
 })
 export class AppI18nModule {}
+
+// @Module({
+//   imports: [
+//     I18nModule.forRoot({
+//       fallbackLanguage: 'fa',
+//       loaderOptions: {
+//         path: path.join(process.cwd(), 'src/i18n/locales'),
+//       },
+//       resolvers: [
+//         { use: QueryResolver, options: ['lang'] },
+//         AcceptLanguageResolver,
+//         new HeaderResolver(['x-lang']),
+//       ],
+//       // inject: [ConfigService],
+//     }),
+//   ],
+//   exports: [I18nModule],
+// })
+// export class AppI18nModule {}
