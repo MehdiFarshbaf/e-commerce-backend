@@ -12,6 +12,7 @@ import Role from '../enums/userRoleEnum';
 import { Address } from '../../address/entities/address.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 import { Role as RoleEntity } from './../../auth/entities/role.entity';
+import { Permission } from '../../auth/entities/permission.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -47,6 +48,10 @@ export class User {
   tickets: Ticket[];
 
   @ManyToMany(() => RoleEntity)
-  @JoinTable()
+  @JoinTable({ name: 'user_roles' })
   roles: RoleEntity[];
+
+  @ManyToMany(() => Permission)
+  @JoinTable({ name: 'user_permissions' })
+  permissions: Permission[];
 }
