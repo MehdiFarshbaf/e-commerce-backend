@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -39,5 +47,11 @@ export class AuthController {
       message: this.i18n.t('auth.login'),
       data: loginData,
     };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/getUserPermission/:userId')
+  async getUserPermissions(@Param('userId') userId: number) {
+    const login = await this.authService.getUserPermissions(userId);
   }
 }

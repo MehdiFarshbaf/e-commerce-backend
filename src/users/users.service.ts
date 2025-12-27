@@ -52,6 +52,16 @@ export class UsersService {
     return user;
   }
 
+  async findUserByPermission(id: number) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['roles', 'roles.permissions', 'permissions'],
+    });
+    if (!user)
+      throw new BadRequestException(`کاربری با این شناسه ${id} یافت نشد.`);
+    return user;
+  }
+
   async findUserByMobile(mobile: string, checkExit: boolean = false) {
     const user = await this.userRepository.findOneBy({ mobile });
     if (!user && checkExit)
