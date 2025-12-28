@@ -46,6 +46,6 @@ export class AuthService {
 
   async getUserPermissions(userId: number) {
     const user = await this.userService.findUserByPermission(userId);
-    console.log(user);
+    return user;
   }
 }

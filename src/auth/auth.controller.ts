@@ -52,6 +52,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Get('/getUserPermission/:userId')
   async getUserPermissions(@Param('userId') userId: number) {
-    const login = await this.authService.getUserPermissions(userId);
+    const user = await this.authService.getUserPermissions(userId);
+    return user;
   }
 }
