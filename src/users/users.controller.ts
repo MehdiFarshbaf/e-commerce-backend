@@ -17,6 +17,7 @@ import type { Response } from 'express';
 import Role from './enums/userRoleEnum';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/role.decorator';
+import { Permissions } from '../auth/decorators/permissions.decorator';
 
 @Roles(Role.Admin)
 @ApiBearerAuth()
@@ -42,6 +43,7 @@ export class UsersController {
     summary: 'Get all users (with optional role filter, pagination)',
   })
   @Get()
+  @Permissions('read.user')
   async findAll(
     @Res() res: Response,
     @Query('role') role?: Role,
@@ -59,6 +61,7 @@ export class UsersController {
   // @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get a user by ID' })
   @Get(':id')
+  @Permissions('read.user')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const user = await this.usersService.findOne(+id);
     res.status(HttpStatus.OK).json({
