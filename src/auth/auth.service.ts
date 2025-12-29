@@ -44,7 +44,7 @@ export class AuthService {
     }
   }
 
-  async getUserPermissions(userId: number) {
+  async getUserPermissions(userId: number): Promise<string[]> {
     const user = await this.userService.findUserByPermission(userId);
     const permissions = new Set<string>();
     user.roles?.forEach((role) => {
