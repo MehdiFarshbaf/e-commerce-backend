@@ -72,6 +72,22 @@ export class AuthController {
     };
   }
 
+  @ApiBearerAuth()
+  @Post('role/remove-from-user')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'remove role from user' })
+  async removeRoleFromUser(@Body() addRoleToUserDto: AddRoleToUserDto) {
+    const newRole = await this.authService.removeRoleFromUser(
+      addRoleToUserDto.userId,
+      addRoleToUserDto.roleId,
+    );
+    return {
+      success: true,
+      message: 'remove role',
+      data: newRole,
+    };
+  }
+
   // @HttpCode(HttpStatus.OK)
   // @Get('/getUserPermission/:userId')
   // async getUserPermissions(@Param('userId') userId: number) {

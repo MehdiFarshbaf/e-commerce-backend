@@ -6,6 +6,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+// import { RequestUser } from '../common/interfaces/request-user.interface';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -15,7 +16,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   // اجازه رد شدن از گارد رو میده اگر return true کنه
   canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getClass(), // برای کل کلاس
       context.getHandler(), // برای هندلر های داخل کلاس
     ]);

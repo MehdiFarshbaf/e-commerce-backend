@@ -8,8 +8,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import Role from './enums/userRoleEnum';
+import RoleEnum from './enums/userRoleEnum';
 import * as bcrypt from 'bcryptjs';
+import { Role } from '../auth/entities/role.entity';
 
 @Injectable()
 export class UsersService {
@@ -38,7 +39,7 @@ export class UsersService {
     }
   }
 
-  async findAll(role?: Role, limit: number = 10, page: number = 1) {
+  async findAll(role?: RoleEnum, limit: number = 10, page: number = 1) {
     const query = this.userRepository.createQueryBuilder('users');
 
     if (role) {
@@ -56,7 +57,7 @@ export class UsersService {
     return user;
   }
 
-  async addRole(userId: number, role) {
+  async addRole(userId: number, role: Role) {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['roles'],
@@ -64,6 +65,19 @@ export class UsersService {
     if (!user)
       throw new NotFoundException('کاربر با این شناسه کاربری یافت نشد.');
     user?.roles.push(role);
+    return this.userRepository.save(user);
+  }
+
+  async removeRole(userId: number, roleId: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['roles'],
+    });
+
+    if (!user)
+      throw new NotFoundException('کاربر با این شناسه کاربری یافت نشد.');
+
+    user.roles = user.roles.filter((role) => role.id !== roleId);
     return this.userRepository.save(user);
   }
 
@@ -93,6 +107,12 @@ export class UsersService {
     } catch (error) {
       throw new BadRequestException(error);
     }
+  }
+
+  async checkUserById(id: number): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException('کاربری با این شناسه یافت نشد.');
+    return user;
   }
 
   async remove(id: number): Promise<void> {

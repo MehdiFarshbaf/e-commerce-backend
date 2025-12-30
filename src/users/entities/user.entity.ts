@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import Role from '../enums/userRoleEnum';
+import RoleEnum from '../enums/userRoleEnum';
 import { Address } from '../../address/entities/address.entity';
 import { Ticket } from '../../tickets/entities/ticket.entity';
 import { Role as RoleEntity } from './../../auth/entities/role.entity';
@@ -30,10 +30,10 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: Role,
-    default: Role.Normal_User,
+    enum: RoleEnum,
+    default: RoleEnum.Normal_User,
   })
-  role: Role;
+  role: RoleEnum;
 
   @CreateDateColumn()
   created_at: Date;

@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-// import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
-
-// import { User } from '../../users/entities/user.entity';
+import {
+  RequestPayload,
+  RequestUser,
+} from '../common/interfaces/request-user.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -24,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   // این متد بعد از تأیید توکن اجرا می‌شه
   // payload همون چیزیه که موقع sign کردن توکن گذاشتی (مثلاً { sub: userId, email: '...' })
   // async validate(payload: any): Promise<User> {
-  validate(payload: any) {
+  validate(payload: RequestPayload): RequestUser {
     // const user = await this.usersService.findOneById(payload.sub);
 
     // if (!user) {
@@ -42,7 +43,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       userId: payload.sub,
       mobile: payload.mobile,
       display_name: payload.display_name,
-      role: payload.role
+      role: payload.role,
     };
   }
 }

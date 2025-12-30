@@ -15,6 +15,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Role } from './entities/role.entity';
+import { RequestPayload } from './common/interfaces/request-user.interface';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +41,7 @@ export class AuthService {
       if (!(await bcrypt.compare(loginDto.password, user.password))) {
         throw new UnauthorizedException('رمز ورود شما اشتباه است.');
       }
-      const payload = {
+      const payload: RequestPayload = {
         mobile: user.mobile,
         sub: user.id,
         display_name: user.display_name,
@@ -77,11 +78,34 @@ export class AuthService {
 
   async addRoleToUser(userId: number, roleId: number) {
     const user = await this.userService.findUserByPermission(userId);
+
     const role = await this.roleRepository.findOne({ where: { id: roleId } });
     if (!role) throw new NotFoundException('نقشی با این شناسه یافت نشد.');
-    if (!user.roles.includes((r) => r.id === role.id)) {
-      return await this.userService.addRole(userId, role);
+
+    // if (!user.roles.includes((r) => r.id === role.id)) {
+    //   return await this.userService.addRole(userId, role);
+    // }
+
+    // throw new BadRequestException('این نقش قبلا به کاربر اضافه شده است.');
+
+    if (user.roles.some((r) => r.id === role.id)) {
+      throw new BadRequestException('این نقش قبلاً به کاربر اضافه شده است');
     }
-    throw new BadRequestException('این نقش قبلا به کاربر اضافه شده است.');
+
+    // اضافه کردن نقش
+    return await this.userService.addRole(userId, role);
+  }
+
+  async removeRoleFromUser(userId: number, roleId: number) {
+    const user = await this.userService.findUserByPermission(userId);
+
+    const role = await this.roleRepository.findOne({ where: { id: roleId } });
+    if (!role) throw new NotFoundException('نقشی با این شناسه یافت نشد.');
+
+    if (user.roles.find((r) => r.id === role.id)) {
+      return await this.userService.removeRole(userId, role.id);
+    }
+
+    throw new BadRequestException('نقش وارد شده معتبر نمیباشد.');
   }
 }

@@ -14,12 +14,12 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import type { Response } from 'express';
-import Role from './enums/userRoleEnum';
+import RoleEnum from './enums/userRoleEnum';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { Permissions } from '../auth/decorators/permissions.decorator';
 
-@Roles(Role.Admin)
+@Roles(RoleEnum.Admin)
 @ApiBearerAuth()
 @ApiTags('Users - مدیریت کاربران')
 @Controller('users')
@@ -46,7 +46,7 @@ export class UsersController {
   @Permissions('read.user')
   async findAll(
     @Res() res: Response,
-    @Query('role') role?: Role,
+    @Query('role') role?: RoleEnum,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ) {
@@ -61,7 +61,7 @@ export class UsersController {
   // @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get a user by ID' })
   @Get(':id')
-  @Permissions('read.user')
+  // @Permissions('read.user')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const user = await this.usersService.findOne(+id);
     res.status(HttpStatus.OK).json({
