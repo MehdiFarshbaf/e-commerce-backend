@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -81,6 +82,6 @@ export class AuthService {
     if (!user.roles.includes((r) => r.id === role.id)) {
       return await this.userService.addRole(userId, role);
     }
-    return false;
+    throw new BadRequestException('این نقش قبلا به کاربر اضافه شده است.');
   }
 }

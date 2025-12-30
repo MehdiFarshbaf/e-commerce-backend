@@ -57,7 +57,10 @@ export class UsersService {
   }
 
   async addRole(userId: number, role) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['roles'],
+    });
     if (!user)
       throw new NotFoundException('کاربر با این شناسه کاربری یافت نشد.');
     user?.roles.push(role);
