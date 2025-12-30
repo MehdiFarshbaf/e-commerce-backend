@@ -6,6 +6,7 @@ import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Public } from './decorators/public.decorator';
 import { I18nService } from 'nestjs-i18n';
 import { CreateRoleDto } from './dto/create-role.dto';
+import { AddRoleToUserDto } from './dto/add-role-to-user.dto';
 
 // @Public()
 @Controller('auth')
@@ -48,6 +49,22 @@ export class AuthController {
   @ApiOperation({ summary: 'create role' })
   async newRole(@Body() bode: CreateRoleDto) {
     const newRole = await this.authService.createRole(bode.name);
+    return {
+      success: true,
+      message: 'created role',
+      data: newRole,
+    };
+  }
+
+  @ApiBearerAuth()
+  @Post('role/append-to-user')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'append role to user' })
+  async addRoleToUser(@Body() addRoleToUserDto: AddRoleToUserDto) {
+    const newRole = await this.authService.addRoleToUser(
+      addRoleToUserDto.userId,
+      addRoleToUserDto.roleId,
+    );
     return {
       success: true,
       message: 'created role',

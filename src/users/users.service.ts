@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -50,6 +54,14 @@ export class UsersService {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) throw new BadRequestException('کاربری با این شناسه یافت نشد.');
     return user;
+  }
+
+  async addRole(userId: number, role) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user)
+      throw new NotFoundException('کاربر با این شناسه کاربری یافت نشد.');
+    user?.roles.push(role);
+    return this.userRepository.save(user);
   }
 
   async findUserByPermission(id: number) {
