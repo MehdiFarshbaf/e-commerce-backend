@@ -2,10 +2,14 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
-import Role from '../users/enums/userRoleEnum';
+import RoleEnum from '../users/enums/userRoleEnum';
 import * as bcrypt from 'bcryptjs';
 import { LoginDto } from './dto/login.dto';
 import { I18nService } from 'nestjs-i18n';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Role } from './entities/role.entity';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +17,7 @@ export class AuthService {
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
     private readonly i18n: I18nService,
+    @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -20,7 +25,7 @@ export class AuthService {
     return this.userService.create({
       ...registerDto,
       password: hashedPassword,
-      role: Role.Normal_User,
+      role: RoleEnum.Normal_User,
     });
   }
 
@@ -58,5 +63,10 @@ export class AuthService {
     });
 
     return Array.from(permissions);
+  }
+
+  async createRole(name: string): Promise<Role> {
+    const role = this.roleRepository.create({ name });
+    return this.roleRepository.save(role);
   }
 }

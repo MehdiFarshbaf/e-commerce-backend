@@ -8,9 +8,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategies';
 import { APP_GUARD } from '@nestjs/core';
 import { PermissionsGuard } from './guards/permissions.guard';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Role } from './entities/role.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Role]),
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({

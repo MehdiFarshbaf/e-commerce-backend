@@ -1,20 +1,13 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Public } from './decorators/public.decorator';
 import { I18nService } from 'nestjs-i18n';
+import { CreateRoleDto } from './dto/create-role.dto';
 
-@Public()
+// @Public()
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -22,7 +15,7 @@ export class AuthController {
     private readonly i18n: I18nService,
   ) {}
 
-  // @Public()
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'register user' })
   @Post('register')
@@ -36,7 +29,7 @@ export class AuthController {
     };
   }
 
-  // @Public()
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'login user' })
   @Post('login')
@@ -49,10 +42,23 @@ export class AuthController {
     };
   }
 
-  @HttpCode(HttpStatus.OK)
-  @Get('/getUserPermission/:userId')
-  async getUserPermissions(@Param('userId') userId: number) {
-    const user = await this.authService.getUserPermissions(userId);
-    return user;
+  @ApiBearerAuth()
+  @Post('role')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'create role' })
+  async newRole(@Body() bode: CreateRoleDto) {
+    const newRole = await this.authService.createRole(bode.name);
+    return {
+      success: true,
+      message: 'created role',
+      data: newRole,
+    };
   }
+
+  // @HttpCode(HttpStatus.OK)
+  // @Get('/getUserPermission/:userId')
+  // async getUserPermissions(@Param('userId') userId: number) {
+  //   const user = await this.authService.getUserPermissions(userId);
+  //   return user;
+  // }
 }
