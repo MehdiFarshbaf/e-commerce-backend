@@ -16,6 +16,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Role } from './entities/role.entity';
 import { RequestPayload } from './common/interfaces/request-user.interface';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -107,5 +108,10 @@ export class AuthService {
     }
 
     throw new BadRequestException('نقش وارد شده معتبر نمیباشد.');
+  }
+
+  async getUserRoles(userId: number): Promise<User> {
+    const user = await this.userService.findUserByPermission(userId);
+    return user;
   }
 }

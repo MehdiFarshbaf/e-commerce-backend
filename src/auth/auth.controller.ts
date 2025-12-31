@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -85,6 +93,19 @@ export class AuthController {
       success: true,
       message: 'remove role',
       data: newRole,
+    };
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'get user roles' })
+  @Get('role/get-user-roles/:user_id')
+  @HttpCode(HttpStatus.OK)
+  async getUserRoles(@Param('user_id') user_id: number) {
+    const userRoles = await this.authService.getUserRoles(user_id);
+    return {
+      success: true,
+      message: 'user roles',
+      data: userRoles,
     };
   }
 
