@@ -10,12 +10,13 @@ import {
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Public } from './decorators/public.decorator';
 import { I18nService } from 'nestjs-i18n';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { AddRoleToUserDto } from './dto/add-role-to-user.dto';
 import { CreatePermissionDto } from './dto/create-permission.dto';
+import { CreatePermissionsDto } from './dto/create-permissions.dto';
 
 // @Public()
 @Controller('auth')
@@ -111,17 +112,47 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'create permission' })
+  @ApiOperation({
+    summary: 'Create permission(s)',
+    description:
+      'Create one or multiple permissions. Accepts either a single permission name or an array of permission names.',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Permission(s) created successfully',
+    schema: {
+      example: {
+        success: true,
+        message: 'Permissions created successfully',
+        data: [
+          { id: 1, name: 'create.user' },
+          { id: 2, name: 'delete.user' },
+        ],
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data',
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'Permission(s) already exist',
+  })
   @Post('permission')
   @HttpCode(HttpStatus.CREATED)
-  async createPermission(@Body() createPermissionDto: CreatePermissionDto) {
-    const permission = await this.authService.createPermission(
-      createPermissionDto.name,
+  async createPermission(@Body() createPermissionsDto: CreatePermissionsDto) {
+    const permissions = await this.authService.createPermissions(
+      createPermissionsDto.name,
     );
+
+    const isArray = Array.isArray(createPermissionsDto.name);
+    const count = isArray ? (permissions as any[]).length : 1;
+
     return {
       success: true,
-      message: 'create permission successfully',
-      data: permission,
+      message: `${count} permission${count > 1 ? 's' : ''} created successfully`,
+      data: permissions,
     };
   }
 

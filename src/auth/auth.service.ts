@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -11,7 +12,7 @@ import RoleEnum from '../users/enums/userRoleEnum';
 import * as bcrypt from 'bcryptjs';
 import { LoginDto } from './dto/login.dto';
 import { I18nService } from 'nestjs-i18n';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Role } from './entities/role.entity';
@@ -118,8 +119,55 @@ export class AuthService {
     return user;
   }
 
-  async createPermission(name: string): Promise<Permission> {
-    const newPermission = this.permissionRepository.create({ name });
-    return await this.permissionRepository.save(newPermission);
+  /**
+   * ایجاد یک یا چند permission جدید
+   * @param input string → یک permission
+   *        string[] → چندین permission
+   */
+  async createPermissions(
+    name: string | string[],
+  ): Promise<Permission | Permission[]> {
+    const permissionNames = Array.isArray(name) ? name : [name];
+
+    // بررسی خالی نبودن آرایه
+    if (permissionNames.length === 0) {
+      throw new BadRequestException('At least one permission name is required');
+    }
+
+    // Trim و حذف مقادیر خالی
+    const trimmedNames = permissionNames
+      .map((n) => n.trim())
+      .filter((n) => n.length > 0);
+
+    if (trimmedNames.length === 0) {
+      throw new BadRequestException('Permission names cannot be empty');
+    }
+
+    // حذف duplicates
+    const uniqueNames = [...new Set(trimmedNames)];
+
+    // بررسی وجود permissions تکراری در دیتابیس
+    const existingPermissions = await this.permissionRepository.find({
+      where: { name: In(uniqueNames) },
+    });
+
+    if (existingPermissions.length > 0) {
+      const existingNames = existingPermissions.map((p) => p.name);
+      throw new ConflictException(
+        `The following permissions already exist: ${existingNames.join(', ')}`,
+      );
+    }
+
+    // ساخت permissions جدید
+    const newPermissions = uniqueNames.map((permissionName) =>
+      this.permissionRepository.create({ name: permissionName }),
+    );
+
+    // ذخیره در دیتابیس
+    const savedPermissions =
+      await this.permissionRepository.save(newPermissions);
+
+    // اگر ورودی تکی بود، فقط یک شی برگردان
+    return Array.isArray(name) ? savedPermissions : savedPermissions[0];
   }
 }
