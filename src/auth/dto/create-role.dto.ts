@@ -3,10 +3,10 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateRoleDto {
   @ApiProperty({
-    example: 'create.user',
+    example: 'admin',
     description: 'name for role',
   })
-  @IsString({ message: 'نام مجوز باید متن باشد.' })
-  @IsNotEmpty({ message: 'نام مجوز الزامی است.' })
+  @IsString({ message: 'نام نقش باید متن باشد.' })
+  @IsNotEmpty({ message: 'نام نقش الزامی است.' })
   name: string;
 }

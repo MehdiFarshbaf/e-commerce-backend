@@ -10,10 +10,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { PermissionsGuard } from './guards/permissions.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
+import { Permission } from './entities/permission.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Role]),
+    TypeOrmModule.forFeature([Role, Permission]),
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({

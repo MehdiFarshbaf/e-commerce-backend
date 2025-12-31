@@ -17,6 +17,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
 import { RequestPayload } from './common/interfaces/request-user.interface';
 import { User } from '../users/entities/user.entity';
+import { Permission } from './entities/permission.entity';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly i18n: I18nService,
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
+    @InjectRepository(Permission)
+    private readonly permissionRepository: Repository<Permission>,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -113,5 +116,10 @@ export class AuthService {
   async getUserRoles(userId: number): Promise<User> {
     const user = await this.userService.findUserByPermission(userId);
     return user;
+  }
+
+  async createPermission(name: string): Promise<Permission> {
+    const newPermission = this.permissionRepository.create({ name });
+    return await this.permissionRepository.save(newPermission);
   }
 }

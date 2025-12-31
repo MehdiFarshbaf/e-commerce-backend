@@ -15,6 +15,7 @@ import { Public } from './decorators/public.decorator';
 import { I18nService } from 'nestjs-i18n';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { AddRoleToUserDto } from './dto/add-role-to-user.dto';
+import { CreatePermissionDto } from './dto/create-permission.dto';
 
 // @Public()
 @Controller('auth')
@@ -106,6 +107,21 @@ export class AuthController {
       success: true,
       message: 'user roles',
       data: userRoles,
+    };
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'create permission' })
+  @Post('permission')
+  @HttpCode(HttpStatus.CREATED)
+  async createPermission(@Body() createPermissionDto: CreatePermissionDto) {
+    const permission = await this.authService.createPermission(
+      createPermissionDto.name,
+    );
+    return {
+      success: true,
+      message: 'create permission successfully',
+      data: permission,
     };
   }
 
