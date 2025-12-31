@@ -17,6 +17,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { AddRoleToUserDto } from './dto/add-role-to-user.dto';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { CreatePermissionsDto } from './dto/create-permissions.dto';
+import { AddPermissionToRoleDto } from './dto/add-permission-to-role.dto';
 
 // @Public()
 @Controller('auth')
@@ -90,6 +91,24 @@ export class AuthController {
     const newRole = await this.authService.removeRoleFromUser(
       addRoleToUserDto.userId,
       addRoleToUserDto.roleId,
+    );
+    return {
+      success: true,
+      message: 'remove role',
+      data: newRole,
+    };
+  }
+
+  @ApiBearerAuth()
+  @Post('permission/append-to-role')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'add permission to role' })
+  async addPermissionToRole(
+    @Body() addPermissionToRoleDto: AddPermissionToRoleDto,
+  ) {
+    const newRole = await this.authService.addPermissionToRole(
+      addPermissionToRoleDto.roleId,
+      addPermissionToRoleDto.permissionId,
     );
     return {
       success: true,

@@ -170,4 +170,27 @@ export class AuthService {
     // اگر ورودی تکی بود، فقط یک شی برگردان
     return Array.isArray(name) ? savedPermissions : savedPermissions[0];
   }
+
+  async addPermissionToRole(
+    roleId: number,
+    permissionId: number,
+  ): Promise<Role> {
+    const role = await this.roleRepository.findOne({
+      where: { id: roleId },
+      relations: ['permissions'],
+    });
+    if (!role) throw new NotFoundException('نقشی با این شناسه یافت نشد.');
+
+    if (!role.permissions.find((p) => p.id === permissionId)) {
+      const permission = await this.permissionRepository.findOne({
+        where: { id: permissionId },
+      });
+      if (!permission)
+        throw new BadRequestException('مجوزی با این شناسه یافت نشد.');
+      role.permissions.push(permission);
+    } else {
+      throw new BadRequestException('این مجوز قبل وجود داشته برای این نقش.');
+    }
+    return this.roleRepository.save(role);
+  }
 }
