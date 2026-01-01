@@ -193,4 +193,28 @@ export class AuthService {
     }
     return this.roleRepository.save(role);
   }
+
+  async addPermissionToUser(userId: number, permissionId: number) {
+    const user = await this.userService.findUserByPermission(userId);
+    if (!user) throw new NotFoundException('کاربری با این شناسه یافت نشد.');
+    const permission = await this.permissionRepository.findOne({
+      where: { id: permissionId },
+    });
+
+    if (!permission)
+      throw new NotFoundException('مجوزی با این شناسه یافت نشد.');
+
+    if (!user.permissions.find((p) => p.id === permissionId)) {
+      let assignWithRole: boolean = false;
+      user.roles.forEach((role) => {
+        role.permissions.forEach((p) => {
+          if (p.id === permissionId) assignWithRole = true;
+        });
+      });
+      if (assignWithRole)
+        throw new BadRequestException('این مجوز قبلا به کاربر اضافه شده است.');
+      return await this.userService.addPermission(userId, permission);
+    }
+    throw new BadRequestException('این مجوز قبلا به کاربر اضافه شده است.');
+  }
 }

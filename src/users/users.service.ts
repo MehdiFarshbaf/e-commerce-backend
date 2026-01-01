@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { User } from './entities/user.entity';
 import RoleEnum from './enums/userRoleEnum';
 import * as bcrypt from 'bcryptjs';
 import { Role } from '../auth/entities/role.entity';
+import { Permission } from '../auth/entities/permission.entity';
 
 @Injectable()
 export class UsersService {
@@ -120,5 +122,24 @@ export class UsersService {
     if (result.affected === 0) {
       throw new BadRequestException('User does not exist');
     }
+  }
+
+  async addPermission(userId: number, permission: Permission) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['permissions'],
+    });
+
+    if (!user) throw new NotFoundException('کاربری با این شناسه یافت نشد.');
+
+    const alreadyPermission = user.permissions.some(
+      (permission) => permission.id === permission.id,
+    );
+
+    if (alreadyPermission)
+      throw new ConflictException('کاربر دارای این مجوز از قبل بوده است.');
+
+    user.permissions.push(permission);
+    return this.userRepository.save(user);
   }
 }
