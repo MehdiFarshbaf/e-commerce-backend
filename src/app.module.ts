@@ -14,6 +14,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AppI18nModule } from './i18n/i18n.module';
 // import { RolesGuard } from './auth/guards/roles.guard';
 // import { PermissionsGuard } from './auth/guards/permissions.guard';
+import { SeederModule } from './seeder/seeder.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AppI18nModule } from './i18n/i18n.module';
     AddressModule,
     TicketsModule,
     IpTrackerModule,
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [

@@ -7,6 +7,7 @@ import {
 import { AuthService } from '../auth.service';
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
+import { RequestUser } from '../common/interfaces/request-user.interface';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -25,8 +26,10 @@ export class PermissionsGuard implements CanActivate {
     if (!requiredPermissions) return true;
 
     // get user data
-    const { user } = context.switchToHttp().getRequest();
-    const userId = user.id;
+    const { user } = context
+      .switchToHttp()
+      .getRequest<Request & { user: RequestUser }>();
+    const userId = user.userId;
 
     const userPermissions = await this.authService.getUserPermissions(userId);
 
@@ -38,5 +41,12 @@ export class PermissionsGuard implements CanActivate {
       throw new ForbiddenException('شما مجوز لازم برای این عملیات رو ندارید.');
 
     return true;
+  }
+
+  private cleanOwn(str: string): string {
+    if (str.endsWith('.own')) {
+      console.log('clean');
+    }
+    return str;
   }
 }

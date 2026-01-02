@@ -14,6 +14,7 @@ import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import type { Response } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { Permissions } from '../auth/decorators/permissions.decorator';
 
 @ApiBearerAuth()
 @Controller('address')
@@ -67,6 +68,7 @@ export class AddressController {
     });
   }
 
+  @Permissions('delete.address.own')
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {
     await this.addressService.remove(+id);

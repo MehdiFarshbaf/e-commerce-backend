@@ -142,4 +142,5 @@ export class UsersService {
     user.permissions.push(permission);
     return this.userRepository.save(user);
   }
+
 }
