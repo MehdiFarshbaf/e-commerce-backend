@@ -7,7 +7,9 @@ import { seederDataPermissions } from './data/seederDataPermissions';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class SeederService implements OnApplicationBootstrap {
+export class SeederService 
+// implements OnApplicationBootstrap
+ {
 
     constructor(
         private configService: ConfigService,
@@ -15,10 +17,10 @@ export class SeederService implements OnApplicationBootstrap {
         @InjectRepository(Permission) private readonly permissionRepository: Repository<Permission>
     ) { }
 
-    async onApplicationBootstrap() {
-        await this.seedPermissions()
-        await this.seedRoles()
-    }
+    // async onApplicationBootstrap() {
+    //     await this.seedPermissions()
+    //     await this.seedRoles()
+    // }
 
     async seedPermissions() {
         for (const pername of seederDataPermissions) {
