@@ -56,8 +56,5 @@ export class SeederService
                 }
             }
         }
-
-
-        console.log('run first seeder ...')
     }
 }
