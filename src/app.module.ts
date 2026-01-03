@@ -9,12 +9,13 @@ import { AddressModule } from './address/address.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { IpTrackerModule } from './ip-tracker/ip-tracker.module';
 import { IpTrackerMiddleware } from './ip-tracker/ip-tracker.middleware';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AppI18nModule } from './i18n/i18n.module';
 // import { RolesGuard } from './auth/guards/roles.guard';
 // import { PermissionsGuard } from './auth/guards/permissions.guard';
 import { SeederModule } from './seeder/seeder.module';
+import { ResponseInterceptor } from './interceptors/response-format.interceptor';
 
 @Module({
   imports: [
@@ -45,6 +46,10 @@ import { SeederModule } from './seeder/seeder.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
     },
     // {
     //   provide: APP_GUARD,

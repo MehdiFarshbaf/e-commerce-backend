@@ -6,7 +6,7 @@ import { LoggerMiddleware } from './middlewares/logger/logger.middleware'
 import { setupSwagger } from './config/swagger.config'
 // import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
 
-async function bootstrap () {
+async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   // Global Exception Filter

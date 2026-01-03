@@ -12,7 +12,7 @@ export class AddressService {
     @InjectRepository(Address)
     private readonly addressRepository: Repository<Address>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async create(createAddressDto: CreateAddressDto) {
     const { userId, ...addressData } = createAddressDto;

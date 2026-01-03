@@ -15,7 +15,6 @@ import { Public } from './decorators/public.decorator';
 import { I18nService } from 'nestjs-i18n';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { AddRoleToUserDto } from './dto/add-role-to-user.dto';
-import { CreatePermissionDto } from './dto/create-permission.dto';
 import { CreatePermissionsDto } from './dto/create-permissions.dto';
 import { AddPermissionToRoleDto } from './dto/add-permission-to-role.dto';
 import { AddPermissionToUserDto } from './dto/add-permission-to-user.dto';
@@ -36,7 +35,6 @@ export class AuthController {
     const registerData = await this.authService.register(body);
 
     return {
-      success: true,
       message: 'User registered',
       data: registerData,
     };
@@ -49,7 +47,6 @@ export class AuthController {
   async login(@Body() body: LoginDto) {
     const loginData = await this.authService.login(body);
     return {
-      success: true,
       message: this.i18n.t('auth.login'),
       data: loginData,
     };
@@ -62,7 +59,6 @@ export class AuthController {
   async newRole(@Body() bode: CreateRoleDto) {
     const newRole = await this.authService.createRole(bode.name);
     return {
-      success: true,
       message: 'created role',
       data: newRole,
     };
@@ -78,7 +74,6 @@ export class AuthController {
       addRoleToUserDto.roleId,
     );
     return {
-      success: true,
       message: 'created role',
       data: newRole,
     };
@@ -94,7 +89,6 @@ export class AuthController {
       addRoleToUserDto.roleId,
     );
     return {
-      success: true,
       message: 'remove role',
       data: newRole,
     };
@@ -112,7 +106,6 @@ export class AuthController {
       addPermissionToRoleDto.permissionId,
     );
     return {
-      success: true,
       message: 'remove role',
       data: newRole,
     };
@@ -130,7 +123,6 @@ export class AuthController {
       addPermissionToUserDto.permissionId,
     );
     return {
-      success: true,
       message: 'permission has added to user',
       data: newRole,
     };
@@ -143,7 +135,6 @@ export class AuthController {
   async getUserRoles(@Param('user_id') user_id: number) {
     const userRoles = await this.authService.getUserRoles(user_id);
     return {
-      success: true,
       message: 'user roles',
       data: userRoles,
     };
@@ -188,16 +179,8 @@ export class AuthController {
     const count = isArray ? (permissions as any[]).length : 1;
 
     return {
-      success: true,
       message: `${count} permission${count > 1 ? 's' : ''} created successfully`,
       data: permissions,
     };
   }
-
-  // @HttpCode(HttpStatus.OK)
-  // @Get('/getUserPermission/:userId')
-  // async getUserPermissions(@Param('userId') userId: number) {
-  //   const user = await this.authService.getUserPermissions(userId);
-  //   return user;
-  // }
 }

@@ -5,80 +5,52 @@ import {
   Body,
   Param,
   Delete,
-  Res,
-  HttpStatus,
   Put,
-  UseInterceptors,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
-import type { Response } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Permissions } from '../auth/decorators/permissions.decorator';
-import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
-
-@UseInterceptors(LoggingInterceptor)
 @ApiBearerAuth()
 @Controller('address')
 export class AddressController {
   constructor(private readonly addressService: AddressService) { }
 
+  @HttpCode(HttpStatus.CREATED)
   @Post()
-  async create(
-    @Body() createAddressDto: CreateAddressDto,
-    @Res() res: Response,
-  ) {
+  async create(@Body() createAddressDto: CreateAddressDto) {
     const newAddress = await this.addressService.create(createAddressDto);
-    res.status(HttpStatus.CREATED).json({
-      status: 'success',
-      message: 'آدرس با موفقیت ایجاد شد.',
-      data: newAddress,
-    });
+    return {
+      message: 'آدرس جدید ایجاد شد.',
+      data: newAddress
+    }
   }
 
   @Get()
-  async findAll(@Res() res: Response) {
+  async findAll() {
     const addresses = await this.addressService.findAll();
-    res.status(HttpStatus.OK).json({
-      status: 'success',
-      message: 'لیست آدرس ها با موفقیت دریافت شد.',
-      data: addresses,
-    });
+    return addresses
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res: Response) {
+  async findOne(@Param('id') id: string) {
     const address = await this.addressService.findOne(+id);
-    res.status(HttpStatus.OK).json({
-      status: 'success',
-      message: 'آدرس مورد نظر یافت شد.',
-      data: address,
-    });
+    return address
   }
 
   @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateAddressDto: UpdateAddressDto,
-    @Res() res: Response,
-  ) {
+  async update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
     const address = await this.addressService.update(+id, updateAddressDto);
-    res.status(HttpStatus.OK).json({
-      status: 'success',
-      message: 'ویرایش آدرس موفقیت آمیز بود.',
-      data: address,
-    });
+    return address
   }
 
-  @Permissions('delete.address.own')
+  @Permissions('address.delete')
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res: Response) {
+  async remove(@Param('id') id: string) {
     await this.addressService.remove(+id);
-    res.status(HttpStatus.OK).json({
-      status: 'success',
-      message: 'آدرس مورد نظر با موفقیت حذف شد.',
-      data: null,
-    });
+    return { data: "ok" }
   }
 }
