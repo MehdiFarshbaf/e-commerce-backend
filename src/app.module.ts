@@ -9,13 +9,16 @@ import { AddressModule } from './address/address.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { IpTrackerModule } from './ip-tracker/ip-tracker.module';
 import { IpTrackerMiddleware } from './ip-tracker/ip-tracker.middleware';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AppI18nModule } from './i18n/i18n.module';
 // import { RolesGuard } from './auth/guards/roles.guard';
 // import { PermissionsGuard } from './auth/guards/permissions.guard';
 import { SeederModule } from './seeder/seeder.module';
-import { ResponseInterceptor } from './interceptors/response-format.interceptor';
+import { ResponseInterceptor } from './common/interceptors/response-format.interceptor';
+import { HttpExceptions } from './common/filters/http.exceptions';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -23,6 +26,8 @@ import { ResponseInterceptor } from './interceptors/response-format.interceptor'
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    // Task Scheduling
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || 'localhost',
@@ -39,6 +44,7 @@ import { ResponseInterceptor } from './interceptors/response-format.interceptor'
     TicketsModule,
     IpTrackerModule,
     SeederModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [
@@ -50,6 +56,10 @@ import { ResponseInterceptor } from './interceptors/response-format.interceptor'
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptions,
     },
     // {
     //   provide: APP_GUARD,

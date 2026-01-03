@@ -4,13 +4,15 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common'
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter'
 import { LoggerMiddleware } from './middlewares/logger/logger.middleware'
 import { setupSwagger } from './config/swagger.config'
+import { HttpExceptions } from './common/filters/http.exceptions'
 // import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   // Global Exception Filter
-  app.useGlobalFilters(new AllExceptionsFilter())
+  // app.useGlobalFilters(new AllExceptionsFilter())
+  // app.useGlobalFilters(new HttpExceptions())
 
   // app.useGlobalGuards(new JwtAuthGuard())
 
