@@ -20,6 +20,7 @@ import { HttpExceptions } from './common/filters/http.exceptions'
 import { ScheduleModule } from '@nestjs/schedule'
 import { TasksModule } from './tasks/tasks.module'
 import { BullModule } from '@nestjs/bull'
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { BullModule } from '@nestjs/bull'
     IpTrackerModule,
     SeederModule,
     TasksModule,
+    SmsModule,
   ],
   controllers: [AppController],
   providers: [
