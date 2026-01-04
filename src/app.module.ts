@@ -1,24 +1,25 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { AddressModule } from './address/address.module';
-import { TicketsModule } from './tickets/tickets.module';
-import { IpTrackerModule } from './ip-tracker/ip-tracker.module';
-import { IpTrackerMiddleware } from './ip-tracker/ip-tracker.middleware';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { AppI18nModule } from './i18n/i18n.module';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { ConfigModule } from '@nestjs/config'
+import { UsersModule } from './users/users.module'
+import { AuthModule } from './auth/auth.module'
+import { AddressModule } from './address/address.module'
+import { TicketsModule } from './tickets/tickets.module'
+import { IpTrackerModule } from './ip-tracker/ip-tracker.module'
+import { IpTrackerMiddleware } from './ip-tracker/ip-tracker.middleware'
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
+import { AppI18nModule } from './i18n/i18n.module'
 // import { RolesGuard } from './auth/guards/roles.guard';
 // import { PermissionsGuard } from './auth/guards/permissions.guard';
-import { SeederModule } from './seeder/seeder.module';
-import { ResponseInterceptor } from './common/interceptors/response-format.interceptor';
-import { HttpExceptions } from './common/filters/http.exceptions';
-import { ScheduleModule } from '@nestjs/schedule';
-import { TasksModule } from './tasks/tasks.module';
+import { SeederModule } from './seeder/seeder.module'
+import { ResponseInterceptor } from './common/interceptors/response-format.interceptor'
+import { HttpExceptions } from './common/filters/http.exceptions'
+import { ScheduleModule } from '@nestjs/schedule'
+import { TasksModule } from './tasks/tasks.module'
+import { BullModule } from '@nestjs/bull'
 
 @Module({
   imports: [
@@ -28,6 +29,14 @@ import { TasksModule } from './tasks/tasks.module';
     }),
     // Task Scheduling
     ScheduleModule.forRoot(),
+    // Bull
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
+        // password: process.env.REDIS_PASSWORD || undefined,
+      },
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || 'localhost',
@@ -72,7 +81,7 @@ import { TasksModule } from './tasks/tasks.module';
   ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(IpTrackerMiddleware).forRoutes('*');
+  configure (consumer: MiddlewareConsumer) {
+    consumer.apply(IpTrackerMiddleware).forRoutes('*')
   }
 }
